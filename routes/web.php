@@ -17,8 +17,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-
 Route::resource('/folders', 'FolderController');
 Route::post('/folders/{path}', 'FolderController@store');
 Route::get('/folders/delete/{id}', 'FolderController@destroy');
