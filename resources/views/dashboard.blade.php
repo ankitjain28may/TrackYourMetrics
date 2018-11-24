@@ -110,28 +110,34 @@
                 <th>Download</th>
                 <th>Delete</th>
             </tr>
-            @if(isset($data['folders']))
-                @foreach($data['folders'] as $folder)
-                    <tr class="file-list__file">
-                        <td><a class="folder folder-in-folder" href="/folders/{{$folder['path']}}">{{$folder['name']}}</a></td>
-                        <td>{{$folder['type']}}</td>
-                        <td>{{$folder['size']}}</td>
-                        <td><a href="/download/folders/{{$folder['path']}}" class="ui__btn download"></a></td>
-                        <td><a class="delete" href="/folders/delete/{{$folder['path']}}"> <i class="fa fa-trash"></i></a></td>
-                    </tr>
-                @endforeach
-            @endif
+            @if(isset($data['empty']) && $data['empty'])
+                <tr class="file-list__file">
+                    <td>No files found.</td>
+                </tr>
+            @else
+                @if(isset($data['folders']))
+                    @foreach($data['folders'] as $folder)
+                        <tr class="file-list__file">
+                            <td><a class="folder folder-in-folder" href="/folders/{{$folder['path']}}">{{$folder['name']}}</a></td>
+                            <td>{{$folder['type']}}</td>
+                            <td>{{$folder['size']}}</td>
+                            <td><a href="/download/folders/{{$folder['path']}}" class="ui__btn download"></a></td>
+                            <td><a class="delete" href="/folders/delete/{{$folder['path']}}"> <i class="fa fa-trash"></i></a></td>
+                        </tr>
+                    @endforeach
+                @endif
 
-            @if(isset($data['files']))
-                @foreach($data['files'] as $file)
-                    <tr class="file-list__file">
-                        <td>{{$file['name']}}</td>
-                        <td>{{$file['type']}}</td>
-                        <td>{{$file['size']}}</td>
-                        <td><a href="/download/files/{{$file['path']}}" class="ui__btn download"></a></td>
-                        <td><a class="delete" href="/files/delete/{{$file['path']}}"> <i class="fa fa-trash"></i></a></td>
-                    </tr>
-                @endforeach
+                @if(isset($data['files']))
+                    @foreach($data['files'] as $file)
+                        <tr class="file-list__file">
+                            <td>{{$file['name']}}</td>
+                            <td>{{$file['type']}}</td>
+                            <td>{{$file['size']}}</td>
+                            <td><a href="/download/files/{{$file['path']}}" class="ui__btn download"></a></td>
+                            <td><a class="delete" href="/files/delete/{{$file['path']}}"> <i class="fa fa-trash"></i></a></td>
+                        </tr>
+                    @endforeach
+                @endif
             @endif
 
         </table>

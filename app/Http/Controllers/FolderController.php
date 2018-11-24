@@ -31,32 +31,8 @@ class FolderController extends Controller
      */
     public function index()
     {
-        $currentDirectoryFolders = Storage::directories('/');
-        if (count($currentDirectoryFolders)) {
-            $directories = [];
-            foreach ($currentDirectoryFolders as $folder) {
-                $directories[] = $this->folderInfo($folder);
-            }
-            $data['directories'] = $directories;
-        }
 
-        $allFiles = Storage::files('/public');
-        if (count($allFiles)) {
-            $files = [];
-            foreach ($allFiles as $file) {
-                $files[] = $this->fileInfo($file);
-            }
-            $data['files'] = $files;
-        }
-
-        $dirs = Storage::directories('/public');
-        if (count($dirs)) {
-            $folders = [];
-            foreach ($dirs as $folder) {
-                $folders[] = $this->folderInfo($folder);
-            }
-            $data['folders'] = $folders;
-        }
+        $data = $this->getData('/', '/public');
         $data['current'] = [];
         $data['path'] = 'public';
         return view('dashboard', ['data' => $data]);
@@ -112,32 +88,8 @@ class FolderController extends Controller
         $path = implode('/', explode('--', $id));
         $currentDirectoryPath = pathinfo($path)['dirname'];
 
-        $currentDirectoryFolders = Storage::directories($currentDirectoryPath);
-        if (count($currentDirectoryFolders)) {
-            $directories = [];
-            foreach ($currentDirectoryFolders as $folder) {
-                $directories[] = $this->folderInfo($folder);
-            }
-            $data['directories'] = $directories;
-        }
+        $data = $this->getData($currentDirectoryPath, $path);
 
-        $allFiles = Storage::files($path);
-        if (count($allFiles)) {
-            $files = [];
-            foreach ($allFiles as $file) {
-                $files[] = $this->fileInfo($file);
-            }
-            $data['files'] = $files;
-        }
-
-        $dirs = Storage::directories($path);
-        if (count($dirs)) {
-            $folders = [];
-            foreach ($dirs as $folder) {
-                $folders[] = $this->folderInfo($folder);
-            }
-            $data['folders'] = $folders;
-        }
         $tags = explode('--', $id);
         // $prev = 'public';
         foreach ($tags as $value) {
@@ -285,14 +237,55 @@ class FolderController extends Controller
         $allFiles = Storage::allFiles('/');
         // filter the ones that match the search keyword
         $matchingFiles = preg_grep('/\w*\s*' . $search . '\w*\s*/', $allFiles);
-
-        $files = [];
-        foreach ($matchingFiles as $path) {
-            $files[] = $this->fileInfo($path);
+        $data['empty'] = true;
+        if (count($matchingFiles)) {
+            $files = [];
+            foreach ($matchingFiles as $path) {
+                $files[] = $this->fileInfo($path);
+            }
+            $data['empty'] = false;
+            $data['files'] = $files;
         }
-        $data['files'] = $files;
         $data['current'] = [];
         $data['path'] = 'public';
         return view('dashboard', ['data' => $data]);
+    }
+
+    public function getData($currentDirectoryPath, $path)
+    {
+        $data['empty'] = true;
+        $check = 0;
+        $currentDirectoryFolders = Storage::directories($currentDirectoryPath);
+        if (count($currentDirectoryFolders)) {
+            $directories = [];
+            foreach ($currentDirectoryFolders as $folder) {
+                $directories[] = $this->folderInfo($folder);
+            }
+            $data['directories'] = $directories;
+        }
+
+        $allFiles = Storage::files($path);
+        if (count($allFiles)) {
+            $check++;
+            $files = [];
+            foreach ($allFiles as $file) {
+                $files[] = $this->fileInfo($file);
+            }
+            $data['files'] = $files;
+        }
+
+        $dirs = Storage::directories($path);
+        if (count($dirs)) {
+            $check++;
+            $folders = [];
+            foreach ($dirs as $folder) {
+                $folders[] = $this->folderInfo($folder);
+            }
+            $data['folders'] = $folders;
+        }
+        if ($check!=0) {
+            $data['empty'] = false;
+        }
+        return $data;
     }
 }
