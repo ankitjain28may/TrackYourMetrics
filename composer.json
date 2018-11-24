@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.1.3",
+        "ankitjain28may/prettysize": "^1.0@dev",
         "chumper/zipper": "^1.0",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.7.*",

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\Files;
 use App\Models\Folders;
+use Ankitjain28may\Prettysize\Pretty;
 use finfo;
 use Zipper;
 
@@ -166,7 +167,7 @@ class FolderController extends Controller
         $file['path'] = implode('--', explode('/', $filedata));
         $file['name'] = $filePath['basename'];
         $file['type'] = $filePath['extension'];
-        $file['size'] = filesize(storage_path() . '/app/' . $filePath['dirname'] . '/' . $filePath['basename']);
+        $file['size'] = Pretty::pretty(filesize(storage_path() . '/app/' . $filePath['dirname'] . '/' . $filePath['basename']));
 
         return $file;
     }
@@ -178,7 +179,7 @@ class FolderController extends Controller
         $file['path'] = implode('--', explode('/', $filedata));
         $file['name'] = $filePath['basename'];
         $file['type'] = 'dir';
-        $file['size'] = filesize(storage_path() . '/app/' . $filePath['dirname'] . '/' . $filePath['basename']);
+        $file['size'] = Pretty::pretty(filesize(storage_path() . '/app/' . $filePath['dirname'] . '/' . $filePath['basename']));
 
         return $file;
     }
