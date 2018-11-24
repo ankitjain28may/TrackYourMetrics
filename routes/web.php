@@ -23,6 +23,7 @@ Route::resource('/folders', 'FolderController');
 Route::post('/folders/{path}', 'FolderController@store');
 Route::get('/folders/delete/{id}', 'FolderController@destroy');
 Route::get('/files/delete/{id}', 'FolderController@destroyfiles');
+Route::get('/search', 'FolderController@search');
 
 Route::post('/files/upload/{path}', 'FolderController@fileupload');
 

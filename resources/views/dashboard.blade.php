@@ -22,18 +22,16 @@
 
   <div class="ui upload-drop" id="app">
     <aside class="ui__sidebar">
-
-        <!-- <input type="text" @keyup.enter="addItem"> -->
-        <input type="text">
-
         <ul class="file-tree">
-        @foreach($data['directories'] as $folder)
-            <li class="file-tree__item">
-                {{-- <div class="folder">{{ json_encode(str_replace('/', '_', $folder)) }}<i class="fa fa-trash"></i></div> --}}
-                <a class="folder" href="/folders/{{$folder['path']}}">{{$folder['name']}}</a> <a class="delete" href="/folders/delete/{{$folder['path']}}"> <i class="fa fa-trash"></i></a>
-            </li>
-        </ul>
-        @endforeach
+        @if(isset($data['directories']))
+            @foreach($data['directories'] as $folder)
+                <li class="file-tree__item">
+                    {{-- <div class="folder">{{ json_encode(str_replace('/', '_', $folder)) }}<i class="fa fa-trash"></i></div> --}}
+                    <a class="folder" href="/folders/{{$folder['path']}}">{{$folder['name']}}</a>
+                </li>
+            </ul>
+            @endforeach
+        @endif
         <!-- /.file-tree -->
 
     </aside>
@@ -47,7 +45,7 @@
             <a href="javascript:void(0);" data-modal="upload-modal" class="ui__btn upload-btn"></a>
 
             <ul class="file-path">
-                @if(count($data['current']))
+                @if(isset($data['current']) && count($data['current']))
                     @foreach($data['current'] as $key => $path)
                         <li><a href='{{$key}}'>{{ $path }}</a></li>
                     @endforeach
@@ -61,12 +59,24 @@
                 <a href="javascript:void(0);" class="ui__dropbtn"></a>
                 <div class="ui__dropbtn-content">
                   <a href="javascript:void(0)" data-modal="create-folder-modal">Create new folder</a>
+                  <a href="javascript:void(0)" data-modal="search-modal">Search</a>
                 </div>
             </div>
             <a href="javascript:void(0);" class="ui__btn help-btn" data-overlay="help"></a>
 
         </div>
         <!-- /.ui__menu -->
+
+        <div class="ui__info info-modal" id="search-modal">
+            <h2>Search</h2>
+            {{-- <p>Simply drag & drop a file here or select one with the button below.</p> --}}
+            <form action="/search" method="GET">
+                <div><input type="text" name="search" id="search" required></div>
+                <button type="submit" class="btn">Search</button>
+                {{ csrf_field() }}
+            </form>
+
+        </div>
 
         <div class="ui__info info-modal" id="create-folder-modal">
             <h2>Add new folder</h2>
@@ -100,25 +110,30 @@
                 <th>Download</th>
                 <th>Delete</th>
             </tr>
-            @foreach($data['folders'] as $folder)
-                <tr class="file-list__file">
-                    <td><a class="folder folder-in-folder" href="/folders/{{$folder['path']}}">{{$folder['name']}}</a></td>
-                    <td>{{$folder['type']}}</td>
-                    <td>{{$folder['size']}}</td>
-                    <td><a href="/download/folders/{{$folder['path']}}" class="ui__btn download"></a></td>
-                    <td><a class="delete" href="/folders/delete/{{$folder['path']}}"> <i class="fa fa-trash"></i></a></td>
-                </tr>
-            @endforeach
+            @if(isset($data['folders']))
+                @foreach($data['folders'] as $folder)
+                    <tr class="file-list__file">
+                        <td><a class="folder folder-in-folder" href="/folders/{{$folder['path']}}">{{$folder['name']}}</a></td>
+                        <td>{{$folder['type']}}</td>
+                        <td>{{$folder['size']}}</td>
+                        <td><a href="/download/folders/{{$folder['path']}}" class="ui__btn download"></a></td>
+                        <td><a class="delete" href="/folders/delete/{{$folder['path']}}"> <i class="fa fa-trash"></i></a></td>
+                    </tr>
+                @endforeach
+            @endif
 
-            @foreach($data['files'] as $file)
-                <tr class="file-list__file">
-                    <td>{{$file['name']}}</td>
-                    <td>{{$file['type']}}</td>
-                    <td>{{$file['size']}}</td>
-                    <td><a href="/download/files/{{$file['path']}}" class="ui__btn download"></a></td>
-                    <td><a class="delete" href="/files/delete/{{$file['path']}}"> <i class="fa fa-trash"></i></a></td>
-                </tr>
-            @endforeach
+            @if(isset($data['files']))
+                @foreach($data['files'] as $file)
+                    <tr class="file-list__file">
+                        <td>{{$file['name']}}</td>
+                        <td>{{$file['type']}}</td>
+                        <td>{{$file['size']}}</td>
+                        <td><a href="/download/files/{{$file['path']}}" class="ui__btn download"></a></td>
+                        <td><a class="delete" href="/files/delete/{{$file['path']}}"> <i class="fa fa-trash"></i></a></td>
+                    </tr>
+                @endforeach
+            @endif
+
         </table>
         <!-- /.file-list -->
 

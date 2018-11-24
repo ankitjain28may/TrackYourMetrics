@@ -32,29 +32,31 @@ class FolderController extends Controller
     public function index()
     {
         $currentDirectoryFolders = Storage::directories('/');
-        $directories = [];
-        foreach ($currentDirectoryFolders as $folder) {
-            $directories[] = $this->folderInfo($folder);
+        if (count($currentDirectoryFolders)) {
+            $directories = [];
+            foreach ($currentDirectoryFolders as $folder) {
+                $directories[] = $this->folderInfo($folder);
+            }
+            $data['directories'] = $directories;
         }
-        $data['directories'] = $directories;
 
         $allFiles = Storage::files('/public');
-        $files = array();
-
-        foreach ($allFiles as $file) {
-            $files[] = $this->fileInfo($file);
+        if (count($allFiles)) {
+            $files = [];
+            foreach ($allFiles as $file) {
+                $files[] = $this->fileInfo($file);
+            }
+            $data['files'] = $files;
         }
 
         $dirs = Storage::directories('/public');
-        $folders = array();
-        foreach ($dirs as $folder) {
-            $folders[] = $this->folderInfo($folder);
+        if (count($dirs)) {
+            $folders = [];
+            foreach ($dirs as $folder) {
+                $folders[] = $this->folderInfo($folder);
+            }
+            $data['folders'] = $folders;
         }
-        // dd($folders);
-
-        // File::makeDirectory(storage_path().'/app/public/images');
-        $data['folders'] = $folders;
-        $data['files'] = $files;
         $data['current'] = [];
         $data['path'] = 'public';
         return view('dashboard', ['data' => $data]);
@@ -111,25 +113,31 @@ class FolderController extends Controller
         $currentDirectoryPath = pathinfo($path)['dirname'];
 
         $currentDirectoryFolders = Storage::directories($currentDirectoryPath);
-        $directories = [];
-        foreach ($currentDirectoryFolders as $folder) {
-            $directories[] = $this->folderInfo($folder);
+        if (count($currentDirectoryFolders)) {
+            $directories = [];
+            foreach ($currentDirectoryFolders as $folder) {
+                $directories[] = $this->folderInfo($folder);
+            }
+            $data['directories'] = $directories;
         }
-        $data['directories'] = $directories;
+
+        $allFiles = Storage::files($path);
+        if (count($allFiles)) {
+            $files = [];
+            foreach ($allFiles as $file) {
+                $files[] = $this->fileInfo($file);
+            }
+            $data['files'] = $files;
+        }
 
         $dirs = Storage::directories($path);
-        $folders = array();
-        foreach ($dirs as $folder) {
-            $folders[] = $this->folderInfo($folder);
+        if (count($dirs)) {
+            $folders = [];
+            foreach ($dirs as $folder) {
+                $folders[] = $this->folderInfo($folder);
+            }
+            $data['folders'] = $folders;
         }
-        $data['folders'] = $folders;
-
-        $files = array();
-        foreach( Storage::files($path) as $file)
-        {
-            $files[] = $this->fileInfo($file);
-        }
-        $data['files'] = $files;
         $tags = explode('--', $id);
         // $prev = 'public';
         foreach ($tags as $value) {
@@ -227,7 +235,6 @@ class FolderController extends Controller
     {
         $file = $request->file('file');
         $path = implode('/', explode('--', $path));
-        // save to storage/app/photos as the new $filename
         if (Storage::exists($path . '/' . $file->getClientOriginalName())) {
             return redirect()->back()->with([
                 'message' => [
@@ -238,7 +245,6 @@ class FolderController extends Controller
         }
         $fileContent = File::get($file);
         Storage::put($path . '/' . $file->getClientOriginalName(), Crypt::encrypt($fileContent));
-        // $path = $file->storeAs($path, $file->getClientOriginalName());
 
         return redirect()->back()->with([
             'message' => [
@@ -263,12 +269,30 @@ class FolderController extends Controller
 
     public function downloadfolders($path)
     {
-        $path = storage_path() . '/app/' . implode('/', explode('--', $path));
-        if (Storage::exists($path . '.zip')) {
-            return dd('Hello');
-            Storage::delete($path . '.zip');
+        $temp = implode('/', explode('--', $path));
+        $path = storage_path() . '/app/' . $temp;
+        if (Storage::exists($temp . '.zip')) {
+            Storage::delete($temp . '.zip');
         }
         Zipper::make($path . '.zip')->add($path)->close();
         return response()->download($path . '.zip');
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->get('search');
+
+        $allFiles = Storage::allFiles('/');
+        // filter the ones that match the search keyword
+        $matchingFiles = preg_grep('/\w*\s*' . $search . '\w*\s*/', $allFiles);
+
+        $files = [];
+        foreach ($matchingFiles as $path) {
+            $files[] = $this->fileInfo($path);
+        }
+        $data['files'] = $files;
+        $data['current'] = [];
+        $data['path'] = 'public';
+        return view('dashboard', ['data' => $data]);
     }
 }
