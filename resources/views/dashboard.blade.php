@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>File Browser (Vue.js Edition)</title>
+  <title>File Management</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 
@@ -60,6 +60,16 @@
                 <div class="ui__dropbtn-content">
                   <a href="javascript:void(0)" data-modal="create-folder-modal">Create new folder</a>
                   <a href="javascript:void(0)" data-modal="search-modal">Search</a>
+                  <a href="{{ route('logout') }}"
+                   onclick="event.preventDefault();
+                                 document.getElementById('logout-form').submit();">
+                    {{ __('Logout') }}
+                  </a>
+
+                  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                      @csrf
+                  </form>
+
                 </div>
             </div>
             <a href="javascript:void(0);" class="ui__btn help-btn" data-overlay="help"></a>

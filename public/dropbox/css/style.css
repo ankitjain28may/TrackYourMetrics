@@ -120,6 +120,12 @@ h1, h2, h3, h4, h5, h6 {
     width: 300px;
   }
 }
+@media (max-width: 700px) {
+  .file-list {
+    display: block;
+    overflow: scroll;
+  }
+}
 
 .ui__main {
   flex: 1 1 auto;
@@ -286,6 +292,7 @@ a.delete {
 
 .file-list {
   width: 100%;
+  overflow: scroll;
   text-align: left;
 }
 .file-list .file-list__file:nth-child(odd) {
