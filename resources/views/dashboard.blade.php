@@ -72,7 +72,7 @@
 
                 </div>
             </div>
-            <a href="javascript:void(0);" class="ui__btn help-btn" data-overlay="help"></a>
+            {{-- <a href="javascript:void(0);" class="ui__btn help-btn" data-overlay="help"></a> --}}
 
         </div>
         <!-- /.ui__menu -->
