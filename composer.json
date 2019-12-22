@@ -12,6 +12,7 @@
         "ankitjain28may/prettysize": "^1.0@dev",
         "chumper/zipper": "^1.0",
         "fideloper/proxy": "^4.0",
+        "honeybadger-io/honeybadger-laravel": " v1.7.2",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0"
     },
